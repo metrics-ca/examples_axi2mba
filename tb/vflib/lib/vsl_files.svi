@@ -1,0 +1,53 @@
+//----------------------------------------------------------------------
+/**
+ * @file vsl_files.svi
+ * @brief Defines VSL files
+ */
+/*
+ * Copyright (C) 2007-2010 Verifore, Inc.
+ * All rights reserved. Property of Verifore, Inc.
+ * Restricted rights to use, duplicate or disclose
+ * this code are granted through contract.
+ */
+//----------------------------------------------------------------------
+`ifndef _VSL_FILES_SVI_
+`define _VSL_FILES_SVI_
+//`protect
+
+//======================================================================
+/**
+ * VPR files.
+ */
+//======================================================================
+
+`include "vpr_sim_defines.inc"
+`include "vpr_type.sv"
+`include "vpr_logwrap.sv"
+`include "vpr_sfunc.sv"
+`include "vpr_file_io.sv"
+
+//======================================================================
+/**
+ * VSL files.
+ */
+//======================================================================
+
+`include "vslib.sv"
+`include "vsl_type.sv"
+`include "vsl_sfunc.sv"
+`include "vsl_perf.sv"
+`include "vsl_sbe.sv"
+`include "vsl_sbe_typed.sv"
+`include "vsl_sb.sv"
+`include "vsl_sblite.sv"
+`include "vsl_sb_report.sv"
+
+`include "vsl_addr_range.sv"
+`include "vsl_addr_elect.sv"
+
+`include "vsl_mm.sv"
+`include "vsl_am.sv"
+`include "vsl_reg.sv"
+
+//`endprotect
+`endif // `ifndef _VSL_FILES_SVI_

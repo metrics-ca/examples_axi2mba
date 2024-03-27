@@ -1,0 +1,38 @@
+//----------------------------------------------------------------------
+/**
+ * @file files_vf_pin.svi
+ * @brief Defines VF Pin files.
+ */
+/*
+ * Copyright (C) 2007-2011 Verifore, Inc.
+ * All rights reserved. Property of Verifore, Inc.
+ * Restricted rights to use, duplicate or disclose
+ * this code are granted through contract.
+ */
+//----------------------------------------------------------------------
+`ifndef _FILES_VF_PIN_SVI_
+`define _FILES_VF_PIN_SVI_
+//`protect
+
+//======================================================================
+/**
+ * Base files.
+ */
+//======================================================================
+
+`include "files_vf.svi"
+`include "vpr_void.sv"
+`include "vpr_cfg.sv"
+
+//======================================================================
+/**
+ * VF Pin files.
+ */
+//======================================================================
+
+`include "vf_pin_data.sv"
+`include "vf_pin_cfg.sv"
+`include "vf_pin_mstr.sv"
+
+//`endprotect
+`endif // `ifndef _FILES_VF_PIN_SVI_

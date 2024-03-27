@@ -1,0 +1,57 @@
+//----------------------------------------------------------------------
+/**
+ * @file vf_axi_files.svi
+ * @brief Defines VF AXI files.
+ */
+/*
+ * Copyright (C) 2007-2011 Verifore, Inc.
+ * All rights reserved. Property of Verifore, Inc.
+ * Restricted rights to use, duplicate or disclose
+ * this code are granted through contract.
+ */
+//----------------------------------------------------------------------
+`ifndef _FILES_VF_AXI_SVI_
+`define _FILES_VF_AXI_SVI_
+//`protect
+
+//======================================================================
+/**
+ * Base files.
+ */
+//======================================================================
+
+`include "files_vf.svi"
+`include "files_vsl.svi"
+`include "vpr_mem_typed.sv"
+
+//======================================================================
+/**
+ * VF AXI files.
+ */
+//======================================================================
+
+`include "vf_axi_type.sv"
+`include "vf_axi_cfg.sv"
+`include "vf_axi_xact.sv"
+`include "vf_axi_typed.sv"
+`include "vf_axi_hndlr.sv"
+//`include "vf_axi_intf.svi"
+`include "vf_axi_intrlv_elect.sv"
+`include "vf_axi_mstr_hndlr.sv"
+`include "vf_axi_mstr.sv"
+`include "vf_axi_slv_hndlr.sv"
+`include "vf_axi_slv.sv"
+`include "vf_axi_mon_hndlr.sv"
+`include "vf_axi_mon.sv"
+`include "vf_axi_opt_fc.sv"
+`include "vf_axi_fc.sv"
+`include "vf_axi_sb_func.sv"
+//`include "vf_axi_lock_scn.sv"
+`include "vf_axi_slv_resp_cb.sv"
+`include "vf_axi_mon_fc_cb.sv"
+`include "vf_axi_mon_sb_cb.sv"
+`include "vf_axi_mstr_mam_cb.sv"
+`include "vf_axi_env.sv"
+
+//`endprotect
+`endif // `ifndef _FILES_VF_AXI_SVI_

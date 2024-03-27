@@ -1,0 +1,48 @@
+//----------------------------------------------------------------------
+/**
+ * @file files_tb.svi
+ * @brief Defines Testbench files.
+ */
+/*
+ * Copyright (C) 2009-2016 Verifore, Inc.
+ * All rights reserved. Property of Verifore, Inc.
+ * Restricted rights to use, duplicate or disclose
+ * this code are granted through contract.
+ */
+//----------------------------------------------------------------------
+`ifndef _FILES_TB_SVI_
+`define _FILES_TB_SVI_
+//`protect
+
+//======================================================================
+/**
+ * VF files.
+ */
+//======================================================================
+
+`include "files_vf_axi.svi"
+`include "files_vf_mba.svi"
+`include "files_vf_pin.svi"
+`include "vf_tb_env.sv"
+
+//======================================================================
+/**
+ * Testbench files.
+ */
+//======================================================================
+
+`include "tb_type.sv"
+`include "dut_pin_data.sv"
+`include "dut_pin_cfg.sv"
+`include "tb_sfunc.sv"
+`include "tb_axi_xact.sv"
+`include "tb_cfg.sv"
+`include "tb_fc.sv"
+`include "tb_intf.sv"
+`include "tb_axi_mon_sb_cb.sv"
+`include "tb_mba_mon_sb_cb.sv"
+`include "tb_env.sv"
+
+//`endprotect
+`endif // `ifndef _FILES_TB_SVI_
+

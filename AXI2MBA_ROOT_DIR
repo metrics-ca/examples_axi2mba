@@ -1,0 +1,12 @@
+#
+# AXI2MBA directory setup
+#
+export AXI2MBA_ROOT_DIR=`pwd`
+if [ -z "$VFLIB_ROOT_DIR" -a -d "./tb/vflib" ]; then
+  cd ./tb/vflib
+  export VFLIB_ROOT_DIR=`pwd`
+  cd $AXI2MBA_ROOT_DIR
+fi
+echo "export AXI2MBA_ROOT_DIR=$AXI2MBA_ROOT_DIR"
+echo "       VFLIB_ROOT_DIR=$VFLIB_ROOT_DIR"
+# end of file 

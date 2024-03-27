@@ -1,0 +1,43 @@
+//----------------------------------------------------------------------
+/**
+ * @file files_vf_mba.svi
+ * @brief Defines VF MBA VIP files
+ */
+/*
+ * Copyright (C) 2009-2016 Verifore, Inc.
+ * All rights reserved. Property of Verifore, Inc.
+ * Restricted rights to use, duplicate or disclose
+ * this code are granted through contract.
+ */
+//----------------------------------------------------------------------
+`ifndef _FILES_VF_MBA_SVI_
+`define _FILES_VF_MBA_SVI_
+//`protect
+
+//======================================================================
+/**
+ * Base files.
+ */
+//======================================================================
+
+`include "files_vf.svi"
+`include "files_vsl.svi"
+
+//======================================================================
+/**
+ * VF MBA VIP files.
+ */
+//======================================================================
+
+`include "vf_mba_xact.sv"
+`include "vf_mba_typed.sv"
+`include "vf_mba_cfg.sv"
+//`include "vf_mba_intf.svi"
+`include "vf_mba_mon_hndlr.sv"
+`include "vf_mba_mon.sv"
+`include "vf_mba_sb_func.sv"
+`include "vf_mba_mon_sb_cb.sv"
+`include "vf_mba_env.sv"
+
+//`endprotect
+`endif // `ifndef _FILES_VF_MBA_SVI_

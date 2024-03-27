@@ -1,0 +1,69 @@
+//----------------------------------------------------------------------
+/**
+ * @file tb_top.vlog
+ * @brief Top-level Verilog testbench.
+ */
+/*
+ * Copyright (C) 2009-2016 Verifore, Inc.
+ * All rights reserved. Property of Verifore, Inc.
+ * Restricted rights to use, duplicate or disclose
+ * this code are granted through contract.
+ */
+//----------------------------------------------------------------------
+`ifndef _TB_TOP_VLOG_
+`define _TB_TOP_VLOG_
+//`protect
+
+//`timescale 1ns/10ps
+
+`include "vpr_tb_util.svi"
+`include "vf_axi_intf.svi"
+`include "vf_mba_intf.svi"
+`include "dut_pin_intf.svi"
+
+//======================================================================
+/**
+ * Top-level Verilog testbench
+ */
+//======================================================================
+
+module tb_top;
+
+   //===================================================================
+   // parameters
+   //===================================================================
+
+   parameter T =  25ns; // 40.0MHz : System clock
+
+   //===================================================================
+   // signals
+   //===================================================================
+
+   bit   tbclk          ; // fastest clock in the testbench
+   bit   tbrst_n        ;
+
+   //===================================================================
+   // interfaces
+   //===================================================================
+
+   vpr_tb_util #( .T( T ) )
+      tb_util( .clk ( tbclk ), .rst(), .rst_n( tbrst_n ) );
+
+   vf_axi_intf    axi_intf();
+   vf_mba_intf    mba_intf();
+   dut_pin_intf   dut_intf();
+
+   //===================================================================
+   // clock and reset
+   //===================================================================
+
+   //===================================================================
+   // instances
+   //===================================================================
+
+   dut_top
+      dut_top  ( .* );
+
+endmodule: tb_top
+//`endprotect
+`endif // `ifndef _TB_TOP_VLOG_

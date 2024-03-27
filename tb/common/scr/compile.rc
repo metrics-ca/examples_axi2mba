@@ -1,0 +1,6 @@
+# compile.rc
+
+INCDIRS=".. ../../common ../../../rtl/sram"
+LIBDIRS=".. ../../common ../../../rtl/sram"
+
+# end of file

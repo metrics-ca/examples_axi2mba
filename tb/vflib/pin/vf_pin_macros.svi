@@ -1,0 +1,57 @@
+//----------------------------------------------------------------------
+/**
+ * @file vf_pin_macros.svi
+ * @brief Defines VF Pin define-macros.
+ */
+/*
+ * Copyright (C) 2007-2011 Verifore, Inc.
+ * All rights reserved. Property of Verifore, Inc.
+ * Restricted rights to use, duplicate or disclose
+ * this code are granted through contract.
+ */
+//----------------------------------------------------------------------
+`ifndef _VF_PIN_MACROS_SVI_
+`define _VF_PIN_MACROS_SVI_
+//`protect
+
+//======================================================================
+// vf_pin_cfg_class::is_chg_intf() method define-macros.
+//======================================================================
+
+//----------------------------------------------------------------------
+// `vf_pin_is_chg_intf_head(_class)
+//----------------------------------------------------------------------
+
+`define  vf_pin_is_chg_intf_head(_class) \
+   _class   dd ; \
+   string   msg   =  ""; \
+   bit      cval  =  1; \
+   if ( prev == null ) return 0; \
+   if ( ! $cast( dd, prev ) ) begin \
+      msg = `"Cannot use a NON _class instance`"; \
+      `vf_fatal( this.log, msg ); \
+      return 0; \
+   end
+
+//----------------------------------------------------------------------
+// `vf_pin_is_chg_intf(_name,_intf)
+//----------------------------------------------------------------------
+
+`define  vf_pin_is_chg_intf(_name,_intf) \
+   if ( dd._name !== _intf._name ) begin \
+      msg = { msg, `"`\n`", $psprintf( `"  _name='h%0h->'h%0h`", \
+                                    dd._name, _intf._name ) }; \
+      dd._name = _intf._name; \
+      cval = 0; \
+   end
+
+//----------------------------------------------------------------------
+// `vf_pin_is_chg_intf_tail
+//----------------------------------------------------------------------
+
+`define  vf_pin_is_chg_intf_tail \
+   if ( msg.len() > 0 ) `vf_note( this.log, { "Toggle:", msg } ); \
+   return cval;
+
+//`endprotect
+`endif // `ifndef _VF_PIN_MACROS_SVI_

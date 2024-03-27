@@ -1,0 +1,210 @@
+//----------------------------------------------------------------------
+/**
+ * @file tb_env_func.svi
+ * @brief Defines DUT specific Extern tb_env_class methods.
+ */
+/*
+ * Copyright (C) 2009-2016 Verifore, Inc.
+ * All rights reserved. Property of Verifore, Inc.
+ * Restricted rights to use, duplicate or disclose
+ * this code are granted through contract.
+ */
+//----------------------------------------------------------------------
+`ifndef _TB_ENV_FUNC_SVI_
+`define _TB_ENV_FUNC_SVI_
+//`protect
+
+   //===================================================================
+   // create_envs
+   //===================================================================
+
+   function void tb_env_class::create_envs();
+      tb_type::stream_id_e ide;
+      string               inst;
+      for ( int i = 0; i < int'( tb_type::RESERVED_ID ); i++ ) begin
+         $cast( ide, i );
+         inst = ide.name();
+         inst = inst.substr( 0, inst.len() - 4 );
+         if ( this.intf.axi_mstrs.exists( i ) &&
+              this.cfg.axi_cfgs.exists( i ) ) begin
+            this.axi_envs[i]  =  new(  inst,
+                                       i,
+                                       this.intf.axi_mstrs[i],
+                                       null,
+                                       this.intf.axi_mons[i],
+                                       this.cfg.axi_cfgs[i]
+                                    );
+            // config will be randomized at tb_env_class::gen_cfg()
+            this.axi_envs[i].en_rand_cfg  =  0;
+         end
+         if ( this.intf.mba_mons.exists( i ) &&
+              this.cfg.mba_cfgs.exists( i ) ) begin
+            this.mba_envs[i]  =  new(  inst,
+                                       i,
+                                       this.intf.mba_mons[i],
+                                       this.cfg.mba_cfgs[i]
+                                    );
+            this.mba_envs[i].en_rand_cfg  =  0;
+         end
+      end
+      if ( this.intf.dut_mstr != null ) begin
+         this.pin_data     =  new();
+         this.cfg.pin_cfg  =  new(  ,
+                                    this.pin_data,
+                                    this.intf.dut_mstr,
+                                    this.intf.dut_mon
+                                 );
+         this.cfg.append_cfg( this.cfg.pin_cfg );
+      end
+   endfunction: create_envs
+
+   //===================================================================
+   // set_by_plusargs
+   //===================================================================
+
+   function void tb_env_class::set_by_plusargs();
+      //begin
+      //   int val;
+      //   if ( $value$plusargs( "opt_val=%d", val ) ) begin
+      //   end
+      //end
+      //if ( $test$plusargs( "opt_set" ) ) begin
+      //end
+   endfunction: set_by_plusargs
+
+   //===================================================================
+   // build_factories
+   //===================================================================
+
+   function void tb_env_class::build_factories();
+      if ( this.mm == null ) begin
+         this.mm  =  new(  "mem_map",
+                           tb_type::RESERVED_I,
+                           tb_type::RESERVED_T
+                        );
+         void'( this.cfg.set_mem_map( this.mm ) );
+         void'( this.cfg.set_mem_wts( this.mm ) );
+      end
+
+      for ( int i = 0; i < int'( tb_type::RESERVED_ID ); i++ ) begin
+         if ( this.cfg.axi_cfgs.exists( i ) &&
+              this.cfg.axi_cfgs[i].port_type == vf_axi_type::AXI_MSTR ) begin
+            this.axi_xacts[i] = new();
+            this.axi_xacts[i].stream_id = i;
+            this.axi_xacts[i].xact_type = vpr_type::INITIATOR;
+            this.axi_xacts[i].data_bus_width
+                              = this.cfg.axi_cfgs[i].data_bus_width;
+            this.axi_xacts[i].max_bytes      =  4096;
+            this.axi_xacts[i].max_xfers      =  256;
+            this.axi_xacts[i].wr_base_addr   =  'h0_4000_0000;
+            this.axi_xacts[i].wr_last_addr   =  'h1_3FFF_FFFF;
+            this.axi_xacts[i].rd_base_addr   =  'h0_4000_0000;
+            this.axi_xacts[i].rd_last_addr   =  'h1_3FFF_FFFF;
+            this.axi_xacts[i].awburst_wts.wt_of_fixed = 0;
+            this.axi_xacts[i].awburst_wts.wt_of_incr  = 2;
+            this.axi_xacts[i].awburst_wts.wt_of_wrap  = 1;
+            this.axi_xacts[i].arburst_wts.wt_of_fixed = 0;
+            this.axi_xacts[i].arburst_wts.wt_of_incr  = 2;
+            this.axi_xacts[i].arburst_wts.wt_of_wrap  = 1;
+            if ( this.axi_envs.exists( i ) )
+               $cast( this.axi_envs[i].factory, this.axi_xacts[i] );
+         end
+       //if ( this.cfg.mba_cfgs.exists( i ) ) begin
+       //   this.cfg.mba_cfgs[i].dqtype = this.pin_data.dqtype;
+       //end
+      end
+
+   endfunction: build_factories
+
+   //===================================================================
+   // build_blks
+   //===================================================================
+
+   function void tb_env_class::build_blks();
+
+      for ( int i = 0; i < int'( tb_type::RESERVED_ID ); i++ ) begin
+         if ( this.axi_envs.exists( i ) ) begin
+            this.axi_envs[i].en_start_gen =  this.cfg.en_start_gen &&
+                                             this.cfg.num_gens[i] >= 0;
+            this.axi_envs[i].build();
+            if ( this.axi_envs[i].gen != null &&
+                 this.cfg.num_gens[i] >= 0 )
+               this.axi_envs[i].gen.max_gens = this.cfg.num_gens[i];
+         end
+         if ( this.mba_envs.exists( i ) ) begin
+            this.mba_envs[i].cfg.dqtype = this.pin_data.dqtype;
+            this.mba_envs[i].build();
+         end
+      end
+
+      if ( this.intf.dut_mstr != null ) begin
+         this.pin_mstr  =  new(  "pin_mstr",
+                                 tb_type::DUT_PIN_ID,
+                                 this.cfg.pin_cfg
+                              );
+      end
+
+      if ( this.cfg.en_sb && this.sb == null ) begin
+         this.sb  =  new(  "sb",
+                           tb_type::RESERVED_I,
+                           tb_type::RESERVED_T
+                        );
+      end
+
+      if ( this.cfg.en_fc && this.fc == null ) begin
+         this.fc = new( "fc" );
+         this.fc.create_fc( this.cfg );
+      end
+   endfunction: build_blks
+
+   //===================================================================
+   // build_cbs
+   //===================================================================
+
+   function void tb_env_class::build_cbs();
+      tb_type::stream_id_e ide;
+      string               inst;
+
+      if ( this.axi_mon_sb_cb == null ) begin
+         this.axi_mon_sb_cb   =  new(  ,
+                                       "axi_mon_sb_cb",
+                                       this.mm,
+                                       this.sb,
+                                       null // sb_func
+                                    );
+      end
+
+      if ( this.mba_mon_sb_cb == null ) begin
+         this.mba_mon_sb_cb   =  new(  ,
+                                       "mba_mon_sb_cb",
+                                       this.mm,
+                                       this.sb,
+                                       null // sb_func
+                                    );
+      end
+
+      for ( int i = 0; i < int'( tb_type::RESERVED_ID ); i++ ) begin
+         $cast( ide, i );
+         inst = ide.name();
+         inst = inst.substr( 0, inst.len() - 4 );
+         if ( this.axi_envs.exists( i ) ) begin
+            if ( this.axi_envs[i].mon != null ) begin
+               this.axi_mon_fc_cbs[i]  =  new(  ,
+                                                { inst, "_fc_cbs" },
+                                                this.fc.axi_fc1s[i],
+                                                this.fc.axi_fc2s[i]
+                                             );
+               this.axi_envs[i].mon.append_cb( this.axi_mon_fc_cbs[i] );
+               this.axi_envs[i].mon.append_cb( this.axi_mon_sb_cb );
+            end
+         end
+         if ( this.mba_envs.exists( i ) ) begin
+            if ( this.mba_envs[i].mon != null ) begin
+               this.mba_envs[i].mon.append_cb( this.mba_mon_sb_cb );
+            end
+         end
+      end
+   endfunction: build_cbs
+
+//`endprotect
+`endif // `ifndef _TB_ENV_FUNC_SVI_

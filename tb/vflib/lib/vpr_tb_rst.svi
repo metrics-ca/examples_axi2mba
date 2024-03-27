@@ -1,0 +1,115 @@
+//----------------------------------------------------------------------
+/**
+ * @file vpr_tb_rst.svi
+ * @brief Defines Testbench Reset utility.
+ */
+/*
+ * Copyright (C) 2009-2011 Verifore, Inc.
+ * All rights reserved. Property of Verifore, Inc.
+ * Restricted rights to use, duplicate or disclose
+ * this code are granted through contract.
+ */
+//----------------------------------------------------------------------
+`ifndef _VPR_TB_RST_SVI_
+`define _VPR_TB_RST_SVI_
+//`protect
+
+//======================================================================
+/**
+ * Testbench Reset utility.
+ */
+//======================================================================
+
+interface vpr_tb_rst
+   (
+      input    bit   clk   ,  // clock
+      output   bit   rst   ,  // positive reset ( active high )
+      output   bit   rst_n    // negative reset ( active low )
+   );
+
+   //===================================================================
+   // Classes
+   //===================================================================
+
+   class vpr_rst_rand_class;
+      rand int n     =  1;
+      int      min_n = 10;
+      int      max_n = 20;
+
+      constraint n_con {
+         n > 0;
+         if ( min_n <= max_n )
+            n inside { [min_n:max_n] };
+         else if ( max_n == 0 )
+            n >= min_n;
+      }
+   endclass: vpr_rst_rand_class
+
+   //===================================================================
+   // Signals
+   //===================================================================
+
+   bit                  SystemReset_n;
+   vpr_rst_rand_class   rst_rand = new();
+
+   //===================================================================
+   // Reset
+   //===================================================================
+
+   assign rst   = ~SystemReset_n;
+   assign rst_n =  SystemReset_n;
+
+   initial
+      SystemReset_n <= 1'b0;
+
+   //===================================================================
+   // Methods
+   //===================================================================
+
+   //-------------------------------------------------------------------
+   // do_reset_n
+   //-------------------------------------------------------------------
+
+   task do_reset_n( int n = -1, longint unsigned dly = 0 );
+      SystemReset_n <= 0;
+      if ( n < 0 ) begin
+         if ( ! rst_rand.randomize() ) rst_rand.n = 10;
+         n = rst_rand.n;
+      end
+      if (  n  > 0 ) repeat ( n ) @( negedge clk );
+      if ( dly > 0 ) #dly;
+      SystemReset_n <= 1;
+   endtask: do_reset_n
+
+   //-------------------------------------------------------------------
+   // do_reset_p
+   //-------------------------------------------------------------------
+
+   task do_reset_p( int n = -1, longint unsigned dly = 0 );
+      SystemReset_n <= 0;
+      if ( n < 0 ) begin
+         if ( ! rst_rand.randomize() ) rst_rand.n = 10;
+         n = rst_rand.n;
+      end
+      if (  n  > 0 ) repeat ( n ) @( posedge clk );
+      if ( dly > 0 ) #dly;
+      SystemReset_n <= 1;
+   endtask: do_reset_p
+
+   //-------------------------------------------------------------------
+   // do_reset
+   //-------------------------------------------------------------------
+
+   task do_reset( int n = -1, longint unsigned dly = 0 );
+      do_reset_n( n, dly );
+   endtask: do_reset
+
+   function void set_rst_min_max( int min_n, int max_n );
+      if ( rst_rand == null ) rst_rand = new();
+      rst_rand.min_n = min_n;
+      rst_rand.max_n = max_n;
+   endfunction: set_rst_min_max
+
+endinterface: vpr_tb_rst
+//`endprotect
+`endif // `ifndef _VPR_TB_RST_SVI_

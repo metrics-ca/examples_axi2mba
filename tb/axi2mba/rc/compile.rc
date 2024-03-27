@@ -1,0 +1,8 @@
+# compile.rc
+
+INCDIRS="$INCDIRS ../../../rtl/axi2mba"
+LIBDIRS="$LIBDIRS ../../../rtl/axi2mba"
+
+INCDIRS="$INCDIRS $VFLIB_ROOT_DIR/common $VFLIB_ROOT_DIR/lib $VFLIB_ROOT_DIR/axi $VFLIB_ROOT_DIR/pin ../../mba .. ../include"
+
+# end of file

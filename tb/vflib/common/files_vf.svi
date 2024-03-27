@@ -1,0 +1,41 @@
+//----------------------------------------------------------------------
+/**
+ * @file files_vf.svi
+ * @brief Defines VF files
+ */
+/*
+ * Copyright (C) 2009-2011 Verifore, Inc.
+ * All rights reserved. Property of Verifore, Inc.
+ * Restricted rights to use, duplicate or disclose
+ * this code are granted through contract.
+ */
+//----------------------------------------------------------------------
+`ifndef _FILES_VF_SVI_
+`define _FILES_VF_SVI_
+//`protect
+
+//======================================================================
+// Simulator specific macro.
+//======================================================================
+
+`include "../lib/vpr_sim_defines.inc"
+
+//======================================================================
+/**
+ * VF files.
+ */
+//======================================================================
+
+`include "../lib/vpr_type.sv"
+
+`include "vflib.sv"
+`include "vf_addr_range.sv"
+`include "vf_xact.sv"
+`include "vf_reg.sv"
+`include "vf_reg_util.sv"
+`include "vf_q_typed.sv"
+`include "vf_intf_hndlr.sv"
+`include "vf_hndlr_log.sv"
+
+//`endprotect
+`endif // `ifndef _FILES_VF_SVI_

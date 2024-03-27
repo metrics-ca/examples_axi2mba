@@ -1,0 +1,69 @@
+//----------------------------------------------------------------------
+/**
+ * @file vflib_macros.svi
+ * @brief Defines VF Library define-macros.
+ */
+/*
+ * Copyright (C) 2009-2011 Verifore, Inc.
+ * All rights reserved. Property of Verifore, Inc.
+ * Restricted rights to use, duplicate or disclose
+ * this code are granted through contract.
+ */
+//----------------------------------------------------------------------
+`ifndef _VFLIB_MACROS_SVI_
+`define _VFLIB_MACROS_SVI_
+//`protect
+
+//======================================================================
+// VF Library: Define-macros.
+//======================================================================
+
+//----------------------------------------------------------------------
+// Callback define-macros.
+//----------------------------------------------------------------------
+
+`define vf_cb(_class,_call) \
+   do begin \
+      for ( int cbi = 0; cbi < this.cbs.size(); cbi++ ) begin \
+         _class cb; \
+         if ( ! $cast( cb, this.cbs[cbi] ) ) continue; \
+         cb._call; \
+      end \
+   end while ( 0 )
+
+//----------------------------------------------------------------------
+// Log define-macros.
+//----------------------------------------------------------------------
+
+`define vf_log(_log,_msg,_sev) \
+   do begin \
+      if ( _log.is_report( _sev ) ) \
+         _log.report( _msg, _sev ); \
+   end while ( 0 )
+
+`define vf_verbose(_log,_msg) \
+   `vf_log( _log, _msg, vf_log_class::SEV_VERBOSE )
+
+`define vf_debug(_log,_msg) \
+   `vf_log( _log, _msg, vf_log_class::SEV_DEBUG )
+
+`define vf_trace(_log,_msg) \
+   `vf_log( _log, _msg, vf_log_class::SEV_TRACE )
+
+`define vf_note(_log,_msg) \
+   `vf_log( _log, _msg, vf_log_class::SEV_NOTE )
+
+`define vf_warning(_log,_msg) \
+   `vf_log( _log, _msg, vf_log_class::SEV_WARNING )
+
+`define vf_error(_log,_msg) \
+   `vf_log( _log, _msg, vf_log_class::SEV_ERROR )
+
+`define vf_fatal(_log,_msg) \
+   `vf_log( _log, _msg, vf_log_class::SEV_FATAL )
+
+`define vf_report(_log,_msg) \
+   `vf_log( _log, _msg, vf_log_class::SEV_REPORT )
+
+//`endprotect
+`endif // `ifndef _VFLIB_MACROS_SVI_

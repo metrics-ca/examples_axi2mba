@@ -1,0 +1,27 @@
+//----------------------------------------------------------------------
+/**
+ * @file vpr_defines.svi
+ * @brief Defines VPR Library defines.
+ */
+/*
+ * Copyright (C) 2007-2009 Verifore, Inc.
+ * All rights reserved. Property of Verifore, Inc.
+ * Restricted rights to use, duplicate or disclose
+ * this code are granted through contract.
+ */
+//----------------------------------------------------------------------
+`ifndef _VPR_DEFINES_SVI_
+`define _VPR_DEFINES_SVI_
+//`protect
+
+//======================================================================
+// VPR Library: Defines.
+//======================================================================
+
+// Address Max Width
+`ifndef VPR_MAX_ADDR_WIDTH
+`define VPR_MAX_ADDR_WIDTH 64
+`endif // `ifndef VPR_MAX_ADDR_WIDTH
+
+//`endprotect
+`endif // `ifndef _VPR_DEFINES_SVI_

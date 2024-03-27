@@ -1,0 +1,56 @@
+//----------------------------------------------------------------------
+/**
+ * @file vf_xvip_files.svi
+ * @brief Defines VF XVIP files
+ */
+/*
+ * Copyright (C) 2009 Verifore, Inc.
+ * All rights reserved. Property of Verifore, Inc.
+ * Restricted rights to use, duplicate or disclose
+ * this code are granted through contract.
+ */
+//----------------------------------------------------------------------
+`ifndef _VF_XVIP_FILES_SVI_
+`define _VF_XVIP_FILES_SVI_
+//`protect
+
+//======================================================================
+/**
+ * VF files.
+ */
+//======================================================================
+
+`include "vf_files.svi"
+`include "vf_xvip_defines.svi"
+`include "vf_xvip_log.sv"
+`include "vf_xvip_data.sv"
+
+//======================================================================
+/**
+ * XVIP files.
+ */
+//======================================================================
+
+`include "xvip_type.sv"
+`include "xvip_std_func.sv"
+`include "xvip_misc.sv"
+`include "xvip_obj.sv"
+`include "xvip_data.sv"
+`include "xvip_cfg.sv"
+//`include "xvip_addr_entry.sv"
+`include "xvip_perf.sv"
+////`include "xvip_bus_xact.sv"
+////`include "xvip_bus_xact_report.sv"
+////`include "xvip_xactor.sv"
+////`include "xvip_reg.sv"
+//`include "xvip_slv_memory.sv"
+`include "xvip_sb_entry.sv"
+`include "xvip_sb.sv"
+`include "xvip_sb_report.sv"
+`include "xvip_sb_func.sv"
+//`include "xvip_mem_sb_func.sv"
+//`include "xvip_mem_sb.sv"
+//`include "xvip_mem_mgr.sv"
+
+//`endprotect
+`endif // `ifndef _VF_XVIP_FILES_SVI_

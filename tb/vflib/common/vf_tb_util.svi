@@ -1,0 +1,192 @@
+//----------------------------------------------------------------------
+/**
+ * @file vf_tb_util.svi
+ * @brief VF Testbench utility.
+ *
+ * This file contains the following Testbench utility.
+ * - Testbench utility interface
+ * - Testbench reset utility interface
+ */
+/*
+ * Copyright (C) 2009 Verifore, Inc.
+ * All rights reserved. Property of Verifore, Inc.
+ * Restricted rights to use, duplicate or disclose
+ * this code are granted through contract.
+ */
+//----------------------------------------------------------------------
+`ifndef _VF_TB_UTIL_SVI_
+`define _VF_TB_UTIL_SVI_
+//`protect
+
+//======================================================================
+/**
+ * Testbench reset utility interface.
+ */
+//======================================================================
+
+interface vf_tb_rst_util(
+      input  bit clk,  // clock
+      output bit rst,  // positive reset ( active high )
+      output bit rst_n // negative reset ( active low )
+   );
+
+   //-------------------------------------------------------------------
+   // Classes
+   //-------------------------------------------------------------------
+
+   class vf_tb_rst_rand_class;
+      rand int n;
+      int min_n = 10;
+      int max_n = 20;
+
+      constraint n_con {
+         n inside { [min_n:max_n] };
+         n > 0;
+      }
+   endclass: vf_tb_rst_rand_class
+
+   //===================================================================
+   // Signals
+   //===================================================================
+
+   bit SystemReset_n;
+   vf_tb_rst_rand_class rst_rand = new();
+
+   //===================================================================
+   // Reset
+   //===================================================================
+
+   assign rst   = ~SystemReset_n;
+   assign rst_n =  SystemReset_n;
+
+   initial
+      SystemReset_n <= 1'b0;
+
+   task do_reset_n( int n = -1,
+                    longint unsigned dly = 0 );
+      SystemReset_n <= 0;
+      if ( n < 0 ) begin
+         if ( ! rst_rand.randomize() ) rst_rand.n = 10;
+         n = rst_rand.n;
+      end
+      if (  n  > 0 ) repeat ( n ) @( negedge clk );
+      if ( dly > 0 ) #dly;
+      SystemReset_n <= 1;
+   endtask: do_reset_n
+
+   task do_reset_p( int n = -1,
+                    longint unsigned dly = 0 );
+      SystemReset_n <= 0;
+      if ( n < 0 ) begin
+         if ( ! rst_rand.randomize() ) rst_rand.n = 10;
+         n = rst_rand.n;
+      end
+      if (  n  > 0 ) repeat ( n ) @( posedge clk );
+      if ( dly > 0 ) #dly;
+      SystemReset_n <= 1;
+   endtask: do_reset_p
+
+   task do_reset( int n = -1, longint unsigned dly = 0 );
+      do_reset_n( n, dly );
+   endtask: do_reset
+
+endinterface: vf_tb_rst_util
+
+//======================================================================
+/**
+ * Testbench utility interface.
+ */
+//======================================================================
+
+interface vf_tb_util(
+      output bit clk,  // clock
+      output bit rst,  // positive reset ( active high )
+      output bit rst_n // negative reset ( active low )
+   );
+
+   //-------------------------------------------------------------------
+   // Parameters and Signals
+   //-------------------------------------------------------------------
+   parameter   T     = 10ns ; // 200MHz
+   parameter   UNITS = -9  ; // -9 = 1ns
+
+   localparam  FREQ  = T > 0 ? 1000 / T : 0;
+
+   reg SystemClock; // fastest clock in the testbench
+
+   //-------------------------------------------------------------------
+   // Clock
+   //-------------------------------------------------------------------
+
+   assign clk = SystemClock;
+
+   initial
+      SystemClock <= 1'b0;
+
+   always begin: p_TBClock // no clock edge at time 0
+      #(T/2.0) SystemClock <= ~SystemClock;
+   end: p_TBClock
+
+   clocking cb @( posedge SystemClock );
+   endclocking
+
+   //-------------------------------------------------------------------
+   // Reset
+   //-------------------------------------------------------------------
+
+   vf_tb_rst_util rst_util( .* );
+
+   task do_reset_p( int n = -1, longint unsigned dly = 0 );
+      rst_util.do_reset_p( n, dly );
+   endtask: do_reset_p
+
+   task do_reset_n( int n = -1, longint unsigned dly = 0 );
+      rst_util.do_reset_n( n, dly );
+   endtask: do_reset_n
+
+   task do_reset( int n = -1, longint unsigned dly = 0 );
+      rst_util.do_reset( n, dly );
+   endtask: do_reset
+
+   //------------------------------------------------------------------
+   // Simulation environment
+   //------------------------------------------------------------------
+
+   initial begin
+      $timeformat( UNITS, // units_number, -9=1ns
+                   0,     // precision_number
+                   "",    // suffix_string
+                   10 );  // minimum_field_width
+//      $display( "System Clock(%m): cycle=%0.2f frequency=%0d", T, FREQ );
+`ifdef VCS // VCS/VCSi implicitly defines
+   `ifndef _VPD_LEVEL_
+      `define _VPD_LEVEL_ 2
+   `endif // `ifndef _VPD_LEVEL_
+      if ( $test$plusargs( "vcdpluson" ) ||
+           $test$plusargs( "vpdon" ) ) begin
+         if ( $test$plusargs( "vpdlite" ) )
+            $vcdpluson( `_VPD_LEVEL_ ); // VCD+
+         else
+            $vcdpluson; // VCD+
+      end
+      if ( $test$plusargs( "vcdon" ) )
+         $dumpvars;  // VCD
+`endif // `ifdef VCS
+
+`ifdef _FSDB_
+   `ifndef _FSDB_LEVEL_
+      `define _FSDB_LEVEL_ 2
+   `endif // `ifndef _FSDB_LEVEL_
+   if ( $test$plusargs( "fsdbon" ) ) begin
+      reg [255:0]   depth_reg = `_FSDB_LEVEL_;
+      reg [8*8-1:0] option_reg = "+all";
+//      $fsdbDumpfile; // verilog.fsdb
+//      $fsdbDumpSVA;
+      $fsdbDumpvars( "level=", depth_reg, "option=", option_reg );
+   end
+`endif // `ifdef _FSDB_
+   end
+
+endinterface: vf_tb_util
+//`endprotect
+`endif // `ifndef _VF_TB_UTIL_SVI_

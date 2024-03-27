@@ -1,0 +1,65 @@
+---
+# Note: The contents of this file are automatically generated.
+# Any changes made by hand may be overwritten.
+version: '0.2'
+work_dir: ../tb/axi2mba/work.regress
+design_root_dir: ../
+simulations:
+  - name: Sim-test3
+    options: >-
+      +warn=noFCICIO -allow-int-enum-assign +acc+b -top work.tb_top -top
+      test3.test +acc+b -waves waves.mxd
+  - name: Sim-test4
+    options: >-
+      +warn=noFCICIO -allow-int-enum-assign +acc+b -top work.tb_top -top
+      test4.test +acc+b -waves waves.mxd
+  - name: Sim-test2 10ms
+    options: >-
+      +warn=noFCICIO -allow-int-enum-assign +acc+b -top work.tb_top -top
+      test2.test +sim_time=10
+  - name: Sim-test2 - 4000ms
+    options: >-
+      +warn=noFCICIO -allow-int-enum-assign +acc+b -top work.tb_top -top
+      test2.test +sim_time=4000
+  - name: Sim-test2 - 10000ms
+    options: >-
+      +warn=noFCICIO -allow-int-enum-assign +acc+b -top work.tb_top -top
+      test2.test +sim_time=10000
+source_files:
+  - path: ../tb_top.vlog
+    language: verilog
+    library_name: work
+    options: >-
+      +ignore+protect +ignore+endprotect
+      +incdir+../../vflib/lib+../../vflib/axi+../../vflib/common+../../vflib/pin
+      -sv -timescale 1ns/1ns +define+NO_PLI +libext+.v+.vp+.vlog
+      +incdir+..+../../common+../../../rtl/sram+../../../rtl/axi2mba+/common+/lib+/axi+/pin+../../mba+..+../include
+      -y .. -y ../../common -y ../../../rtl/sram -y ../../../rtl/axi2mba
+  - path: ../tests/test3.sv
+    language: verilog
+    library_name: test3
+    options: >-
+      +ignore+protect +ignore+endprotect
+      +incdir+../../vflib/lib+../../vflib/axi+../../vflib/common+../../vflib/pin
+      -sv -timescale 1ns/1ns +define+NO_PLI +libext+.v+.vp+.vlog
+      +incdir+..+../../common+../../../rtl/sram+../../../rtl/axi2mba+/common+/lib+/axi+/pin+../../mba+..+../include
+      -y .. -y ../../common -y ../../../rtl/sram -y ../../../rtl/axi2mba
+  - path: ../tests/test4.sv
+    language: verilog
+    library_name: test4
+    options: >-
+      +ignore+protect +ignore+endprotect
+      +incdir+../../vflib/lib+../../vflib/axi+../../vflib/common+../../vflib/pin
+      -sv -timescale 1ns/1ns +define+NO_PLI +libext+.v+.vp+.vlog
+      +incdir+..+../../common+../../../rtl/sram+../../../rtl/axi2mba+/common+/lib+/axi+/pin+../../mba+..+../include
+      -y .. -y ../../common -y ../../../rtl/sram -y ../../../rtl/axi2mba
+  - path: ../tests/test2.sv
+    language: verilog
+    library_name: test2
+    options: >-
+      +ignore+protect +ignore+endprotect
+      +incdir+../../vflib/lib+../../vflib/axi+../../vflib/common+../../vflib/pin
+      -sv -timescale 1ns/1ns +define+NO_PLI +libext+.v+.vp+.vlog
+      +incdir+..+../../common+../../../rtl/sram+../../../rtl/axi2mba+/common+/lib+/axi+/pin+../../mba+..+../include
+      -y .. -y ../../common -y ../../../rtl/sram -y ../../../rtl/axi2mba
+library_search_paths: []

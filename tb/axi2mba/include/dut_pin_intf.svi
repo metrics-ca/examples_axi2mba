@@ -1,0 +1,79 @@
+//----------------------------------------------------------------------
+/**
+ * @file dut_pin_intf.svi
+ * @brief Defines DUT Pin interface.
+ */
+/*
+ * Copyright (C) 2009-2016 Verifore, Inc.
+ * All rights reserved. Property of Verifore, Inc.
+ * Restricted rights to use, duplicate or disclose
+ * this code are granted through contract.
+ */
+//----------------------------------------------------------------------
+`ifndef _DUT_PIN_INTF_SVI_
+`define _DUT_PIN_INTF_SVI_
+//`protect
+
+//======================================================================
+/**
+ * DUT Pin interface
+ */
+//======================================================================
+
+interface dut_pin_intf();
+
+   //===================================================================
+   // parameters
+   //===================================================================
+
+   parameter INPUT_SKW  = 1ns;
+   parameter OUTPUT_SKW = 1ns;
+
+   //===================================================================
+   // signals
+   //===================================================================
+
+   wire clk    ;
+   wire zreset ;
+
+   wire                          slp      ;
+   wire                          dqtype   ;
+
+   //===================================================================
+   // clockings
+   //===================================================================
+
+   //---------------------------------------------------
+   // master port clocking
+   //---------------------------------------------------
+
+   clocking mstr_clking @( posedge clk );
+      default input #INPUT_SKW output #OUTPUT_SKW;
+      input  zreset  ;
+
+      output slp     ;
+      output dqtype  ;
+   endclocking: mstr_clking
+
+   //---------------------------------------------------
+   // monitor port clocking
+   //---------------------------------------------------
+
+   clocking mon_clking @( posedge clk );
+      default input #INPUT_SKW output #OUTPUT_SKW;
+      input  zreset  ;
+
+      input  slp     ;
+      input  dqtype  ;
+   endclocking: mon_clking
+
+   //===================================================================
+   // modports
+   //===================================================================
+
+   modport  mstr( clocking  mstr_clking );
+   modport   mon( clocking   mon_clking );
+
+endinterface: dut_pin_intf
+//`endprotect
+`endif // `ifndef _DUT_PIN_INTF_SVI_

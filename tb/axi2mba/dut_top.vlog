@@ -1,0 +1,163 @@
+//----------------------------------------------------------------------
+/**
+ * @file dut_top.vlog
+ * @brief Defines DUT Top-level Verilog Module.
+ */
+/*
+ * Copyright (C) 2009-2016 Verifore, Inc.
+ * All rights reserved. Property of Verifore, Inc.
+ * Restricted rights to use, duplicate or disclose
+ * this code are granted through contract.
+ */
+//----------------------------------------------------------------------
+`ifndef _DUT_TOP_VLOG_
+`define _DUT_TOP_VLOG_
+//`protect
+
+//======================================================================
+/**
+ * DUT Top-level Verilog Module
+ */
+//======================================================================
+
+module dut_top
+   (
+      vf_axi_intf    axi_intf    ,
+      vf_mba_intf    mba_intf    ,
+      dut_pin_intf   dut_intf    ,
+      input          tbclk       ,
+      input          tbrst_n     //,
+   );
+
+   //===================================================================
+   // parameters
+   //===================================================================
+
+   parameter      P_WIW       =  8;
+   parameter      P_RIW       =  8;
+   parameter      P_AW        =  40;
+   parameter      P_DW        =  128;
+   parameter      P_SW        =  P_DW / 8;
+
+   //===================================================================
+   // signals
+   //===================================================================
+
+   localparam              FIFO_W         =  P_WIW + P_AW + 15;
+
+   logic    [FIFO_W-1:0]   fifo_d[$]      ;
+   reg      [FIFO_W-1:0]   fq             ;
+   reg                     fre            ;
+   integer                 match          ;
+   event                   sim_end        ;
+
+   wire                    we             ;
+   wire                    re             ;
+   reg      [FIFO_W-1:0]   d              ;
+   reg      [FIFO_W-1:0]   q              ;
+
+   //-------------------------------------------------------------------
+   // DUT signals
+   //-------------------------------------------------------------------
+
+   `include "dut_signal.vh"
+
+   //===================================================================
+   // connections
+   //===================================================================
+
+   `include "dut_connect.vh"
+
+   //===================================================================
+   // logic
+   //===================================================================
+
+   initial begin
+      match = 0;
+      @( sim_end );
+      $display( "FIFO: match %0d data", match );
+      $finish;
+   end
+
+   assign   we =  dut.reqbuf.axfifo.WE;
+   assign   re =  dut.reqbuf.axfifo.RE;
+   assign   d  =  dut.reqbuf.axfifo.D;
+   assign   q  =  dut.reqbuf.axfifo.Q;
+
+   always @( posedge tbclk or negedge tbrst_n )
+      if ( ! tbrst_n ) begin
+         while( fifo_d.size() > 0 ) fifo_d.delete( 0 );
+      end
+      else if ( we )
+         fifo_d.push_back( d );
+
+   always @( posedge tbclk or negedge tbrst_n )
+      if ( ! tbrst_n ) begin
+      end
+      else if ( re ) begin
+         if ( fifo_d.size() > 0 )
+            fq    <= fifo_d.pop_front();
+         else begin
+            $display( "FIFO ERROR: FIFO is empty @%0t", $time );
+            #1 ->sim_end;
+         end
+      end
+
+   always @( posedge tbclk or negedge tbrst_n )
+      if ( ! tbrst_n )
+         fre   <= 1'b0;
+      else begin
+         fre   <= re;
+         if ( fre ) begin
+            if ( q === fq )
+               match <= match + 1;
+            else begin
+               $display( "FIFO ERROR: Data mismatch q='h%h fq='h%h @%0t",
+                         q, fq, $time );
+               #1 ->sim_end;
+            end
+         end
+      end
+
+ //always @( posedge CLK or negedge ZRESET )
+ //   if ( ! ZRESET ) begin
+ //   end
+ //   else if ( ~ARB_RAK & $isunknown( ARB_WDT ) ) begin
+ //      $display( "Detect unknown value at ARB_WDT @%0t", $time );
+ //      #1 ->sim_end;
+ //   end
+
+   always @( posedge CLK or negedge ZRESET )
+      if ( ! ZRESET ) begin
+      end
+      else if ( RVALID & RREADY & $isunknown( RDATA ) ) begin
+         $display( "Detect unknown value at RDATA @%0t", $time );
+         #1 ->sim_end;
+      end
+
+   //===================================================================
+   // instances
+   //===================================================================
+
+   DDR_AXI2MBA
+      #(
+         .P_WIW   ( P_WIW  ),
+         .P_RIW   ( P_RIW  )//,
+      )
+      dut   ( .* );
+
+   mba_slv
+      #(
+         .DQW        ( -1        )//,
+      )
+      mba_slv
+      (
+         .CLK        ( tbclk     ),   // i
+         .ZRESET     ( tbrst_n   ),   // i
+         .DQTYPE_O   (           ),   // o
+         .*
+      );
+
+endmodule: dut_top
+//`endprotect
+`endif // `ifndef _DUT_TOP_VLOG_

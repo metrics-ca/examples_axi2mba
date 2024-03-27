@@ -1,0 +1,149 @@
+//----------------------------------------------------------------------
+/**
+ * @file vpr_tb_util.svi
+ * @brief Defines Testbench utility.
+ */
+/*
+ * Copyright (C) 2009-2011 Verifore, Inc.
+ * All rights reserved. Property of Verifore, Inc.
+ * Restricted rights to use, duplicate or disclose
+ * this code are granted through contract.
+ */
+//----------------------------------------------------------------------
+`ifndef _VPR_TB_UTIL_SVI_
+`define _VPR_TB_UTIL_SVI_
+//`protect
+
+`include "vpr_tb_cg.svi"
+`include "vpr_tb_rst.svi"
+
+//======================================================================
+/**
+ * Testbench utility interface.
+ */
+//======================================================================
+
+interface vpr_tb_util(
+      output bit clk,  // clock
+      output bit rst,  // positive reset ( active high )
+      output bit rst_n // negative reset ( active low )
+   );
+
+   //===================================================================
+   // Parameters and Signals
+   //===================================================================
+
+   parameter   T        = 10ns   ; // 200MHz
+   parameter   DLY      =  0ns   ; // no-delay
+   parameter   UNITS    = -9     ; // -9 = 1ns
+   parameter   SUFFIX   = ""     ; // nothing
+   parameter   SYS      =  1     ; // Call System Task
+
+   //===================================================================
+   // Clock
+   //===================================================================
+
+   vpr_tb_cg
+      #( .T ( T   ),
+         .DLY  ( DLY ) )
+      tb_cg    ( .* );
+
+   clocking cb @( posedge clk );
+   endclocking
+
+   //===================================================================
+   // Reset
+   //===================================================================
+
+   vpr_tb_rst
+      tb_rst   ( .* );
+
+   //===================================================================
+   // Methods
+   //===================================================================
+
+   task do_reset_p( int n = -1, longint unsigned dly = 0 );
+      tb_rst.do_reset_p( n, dly );
+   endtask: do_reset_p
+
+   task do_reset_n( int n = -1, longint unsigned dly = 0 );
+      tb_rst.do_reset_n( n, dly );
+   endtask: do_reset_n
+
+   task do_reset  ( int n = -1, longint unsigned dly = 0 );
+      tb_rst.do_reset( n, dly );
+   endtask: do_reset
+
+   function void set_rst_min_max( int min_n, int max_n );
+ //     set_rst_min_max = tb_rst.set_rst_min_max( min_n, max_n );
+      void'( tb_rst.set_rst_min_max( min_n, max_n ) );
+   endfunction: set_rst_min_max
+
+   //===================================================================
+   // Simulation environment
+   //===================================================================
+
+   initial
+      if ( SYS ) begin
+`ifdef VCS // VCS/VCSi implicitly defines
+         $timeformat( UNITS,  // units_number, -9=1ns
+                      0    ,  // precision_number
+                      SUFFIX,  // suffix_string
+                      10   ); // minimum_field_width
+`else // `ifdef VCS
+         begin
+            $timeformat( UNITS ,   // units_number, -9=1ns
+                         0     ,   // precision_number
+                         ""    ,   // suffix_string
+                         10     ); // minimum_field_width
+         end
+/*
+         begin
+            string  sstr; // suffix string
+            $sformat( sstr, "%s", SUFFIX );
+            $timeformat( UNITS ,   // units_number, -9=1ns
+                         0     ,   // precision_number
+                         sstr  ,   // suffix_string
+                         10     ); // minimum_field_width
+         end
+*/
+`endif // `ifdef VCS
+
+`ifdef VCS // VCS/VCSi implicitly defines
+   `ifndef _VPD_LEVEL_
+      `define _VPD_LEVEL_ 2
+   `endif // `ifndef _VPD_LEVEL_
+         if ( $test$plusargs( "vcdpluson" ) ||
+              $test$plusargs( "vpdon" ) ) begin
+            if ( $test$plusargs( "vpdlite" ) )
+               $vcdpluson( `_VPD_LEVEL_ ); // VCD+
+            else
+               $vcdpluson; // VCD+
+         end
+         if ( $test$plusargs( "vcdon" ) )
+            $dumpvars;  // VCD
+`endif // `ifdef VCS
+
+`ifdef _FSDB_
+   `ifndef _FSDB_LEVEL_
+      `define _FSDB_LEVEL_ 2
+   `endif // `ifndef _FSDB_LEVEL_
+         if ( $test$plusargs( "fsdbon" ) ) begin
+            reg [255:0]   depth_reg = `_FSDB_LEVEL_;
+            reg [8*8-1:0] option_reg = "+all";
+//            $fsdbDumpfile; // verilog.fsdb
+//            $fsdbDumpSVA;
+            $fsdbDumpvars( "level=", depth_reg, "option=", option_reg );
+         end
+`endif // `ifdef _FSDB_
+
+`ifdef _WATCHDOG_
+         $display( "Watchdog Timeout is %0t", `_WATCHDOG_ );
+         #(`_WATCHDOG_);
+         $finish;
+`endif // `ifdef _WATCHDOG_
+      end // if ( SYS )
+
+endinterface: vpr_tb_util
+//`endprotect
+`endif // `ifndef _VPR_TB_UTIL_SVI_

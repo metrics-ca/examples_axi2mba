@@ -1,0 +1,70 @@
+//----------------------------------------------------------------------
+/**
+ * @file vpr_tb_sscg.svi
+ * @brief Defines Testbench Spread Spectrum Clock Generator utility.
+ */
+/*
+ * Copyright (C) 2009-2011 Verifore, Inc.
+ * All rights reserved. Property of Verifore, Inc.
+ * Restricted rights to use, duplicate or disclose
+ * this code are granted through contract.
+ */
+//----------------------------------------------------------------------
+`ifndef _VPR_TB_SSCG_SVI_
+`define _VPR_TB_SSCG_SVI_
+//`protect
+
+`include "vpr_math.sv"
+
+//======================================================================
+/**
+ * Testbench Spread Spectrum Clock Generator utility.
+ */
+//======================================================================
+
+interface vpr_tb_sscg(
+      output bit clk    // clock
+   );
+
+   //===================================================================
+   // Parameters and Signals
+   //===================================================================
+
+   parameter   T     = 10ns   ; // 100MHz
+   parameter   DLY   =  0ns   ; // no-delay
+   parameter   TMOD  = 10us   ; // 100kHz
+   parameter   TMAX  =  2ns   ; // (T-TMAX):(T+TMAX)
+   parameter   TSFT  =  0us   ; // Shift
+   parameter   ARCH  =  0     ;
+
+   reg         SystemClock    ;
+   real        t_base         ;
+   real        t_next         ;
+
+   //===================================================================
+   // Clock
+   //===================================================================
+
+   assign clk = SystemClock;
+
+   initial begin
+      t_base      =  T;
+      t_next      =  t_base / 2.0;
+      SystemClock <= 1'b0;
+      #( DLY );
+      forever
+         #( t_next ) SystemClock <= ~SystemClock;
+   end
+
+   always @( SystemClock ) begin
+      t_next = vpr_math::modf( ( $realtime + TSFT ) / TMOD );
+      t_next = ARCH ? vpr_math::sin( t_next ) : vpr_math::sin2( t_next );
+      t_next = ( t_base + TMAX * t_next ) / 2.0;
+   end
+
+   clocking cb @( posedge SystemClock );
+   endclocking
+
+endinterface: vpr_tb_sscg
+//`endprotect
+`endif // `ifndef _VPR_TB_SSCG_SVI_

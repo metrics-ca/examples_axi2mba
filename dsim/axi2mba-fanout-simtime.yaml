@@ -1,0 +1,69 @@
+name: axi2mba-fanout-simtime
+tasks:
+- name: analyze
+  mdc_work: tb/axi2mba/work.regress
+  commands:
+  - ls
+  - dvlcom +ignore+protect +ignore+endprotect +incdir+../../vflib/lib+../../vflib/axi+../../vflib/common+../../vflib/pin
+    -sv -timescale 1ns/1ns +define+NO_PLI +libext+.v+.vp+.vlog +incdir+..+../../common+../../../rtl/sram+../../../rtl/axi2mba+/common+/lib+/axi+/pin+../../mba+..+../include
+    -y .. -y ../../common -y ../../../rtl/sram -y ../../../rtl/axi2mba -l dvlcom.log
+    ../tb_top.vlog
+  - dvlcom +ignore+protect +ignore+endprotect +incdir+../../vflib/lib+../../vflib/axi+../../vflib/common+../../vflib/pin
+    -sv -timescale 1ns/1ns +define+NO_PLI +libext+.v+.vp+.vlog +incdir+..+../../common+../../../rtl/sram+../../../rtl/axi2mba+/common+/lib+/axi+/pin+../../mba+..+../include
+    -y .. -y ../../common -y ../../../rtl/sram -y ../../../rtl/axi2mba -lib test2
+    -l dvlcom-test2.log ../tests/test2.sv
+  - dlib ls -all-libs
+  compute_size: s4
+  outputs:
+    working:
+    - name: work-dsim_work
+      path: tb/axi2mba/work.regress/dsim_work/
+    - name: sim_logs
+      path: tb/axi2mba/work.regress/sim_logs
+    artifacts:
+    - name: dvlcom-log2
+      path: tb/axi2mba/work.regress/dvlcom-test2.log
+    - name: dvlcom-log
+      path: tb/axi2mba/work.regress/dvlcom.log
+- name: sim-test2-elab
+  depends:
+    - library
+  mdc_work: tb/axi2mba/work.regress
+  commands:
+  - dlib ls -all-libs
+  - dsim -allow-int-enum-assign +acc+b -top work.tb_top -top test2.test -l dsim_image.log
+    -genimage Sim-test2_elab
+  inputs:
+    working:
+    - name: library.work-dsim_work
+      path: tb/axi2mba/work.regress/dsim_work/
+  outputs:
+    working:
+    - name: elab-image
+      path: tb/axi2mba/work.regress/dsim_work/Sim-test2_elab.so
+    artifacts:
+    - name: elab-log
+      path: tb/axi2mba/work.regress/dsim_image.log
+- name: sim-test2-sim
+  depends:
+    - sim-test2-elab
+    - library
+  mdc_work: tb/axi2mba/work.regress
+  fanout:
+    type: random
+    name: sim_time
+    count: 5
+    from: 2000
+    to: 5000
+  commands:
+  - dsim  -l sim_logs/sim-test2.log -image Sim-test2_elab -sv_seed 5100 +sim_time=$(fanout.sim_time)
+  inputs:
+    working:
+    - name: sim-test2-elab.elab-image
+      path: tb/axi2mba/work.regress/dsim_work/Sim-test2_elab.so
+    - name: library.sim_logs
+      path: tb/axi2mba/work.regress/sim_logs
+  outputs:
+    artifacts:
+    - name: sim-test2-log
+      path: tb/axi2mba/work.regress/sim_logs

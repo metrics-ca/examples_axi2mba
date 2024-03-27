@@ -1,0 +1,12 @@
+xvip_cfg.sv
+xvip_data.sv
+xvip_misc.sv
+xvip_obj.sv
+xvip_perf.sv
+xvip_sb.sv
+xvip_sb_entry.sv
+xvip_sb_func.sv
+xvip_sb_report.sv
+xvip_sim_defines.inc
+xvip_std_func.sv
+xvip_type.sv

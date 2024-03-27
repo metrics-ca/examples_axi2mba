@@ -1,0 +1,108 @@
+//----------------------------------------------------------------------
+/**
+ * @file vf_axi_mon_fc_cb.sv
+ * @brief Defines VF AXI monitor functional coverage callback class.
+ */
+/*
+ * Copyright (C) 2007-2011 Verifore, Inc.
+ * All rights reserved. Property of Verifore, Inc.
+ * Restricted rights to use, duplicate or disclose
+ * this code are granted through contract.
+ */
+//----------------------------------------------------------------------
+`ifndef _VF_AXI_MON_FC_CB_SV_
+`define _VF_AXI_MON_FC_CB_SV_
+`pragma protect begin_protected
+`pragma protect version=1
+`pragma protect encrypt_agent="dvlencrypt"
+`pragma protect encrypt_agent_info="Metrics Design Automation Inc. P1735 encryptor tool"
+`pragma protect author="author-a"
+`pragma protect author_info="author-a-details"
+`pragma protect data_method="aes256-cbc"
+`pragma protect key_keyowner="Metrics Technologies Inc."
+`pragma protect key_keyname="DSim"
+`pragma protect key_method="rsa"
+`pragma protect key_block
+j/cbiU9IxcRWW9Weu4aTs2jftpAuRRDwFCoqYNoJIv/3R2R3Ni0+YlKDAKHjDyhg
+HUsqkoEEYFuFdxS/0VfVWVVeIscCtAQNHLcMOjShi8mVdiS5BeeSlcsRJqesEUpv
+Hk1Ayxda/LYBISrTVg/kn4qSm6W9QrQYo4x6oqucaU4quq4yxLsDsENeKA4+0qlS
+q6c6Uoy0xkdiYDlHOg4Bv0pCi6C/xKt/wDj+eXRtnPrui6KxNpwb4NsAVmDQl0Wa
+sW4L6D9ZXgU5SbI3+LOoBnqt7tKhNO5OEio4sA08BX9T9OQYpAogf3tb9pAJ9Hef
+MivqZrqvOenYoqOg/pKXCQ==
+`pragma protect data_block
+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
+`pragma protect end_protected
+
+`endif // `ifndef _VF_AXI_MON_FC_CB_SV_
+
+

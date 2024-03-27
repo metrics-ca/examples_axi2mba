@@ -1,0 +1,7 @@
+dvlcom +ignore+protect +ignore+endprotect +incdir+../../vflib/lib+../../vflib/axi+../../vflib/common+../../vflib/pin -sv -timescale 1ns/1ns +define+NO_PLI +libext+.v+.vp+.vlog +incdir+..+../../common+../../../rtl/sram+../../../rtl/axi2mba+/common+/lib+/axi+/pin+../../mba+..+../include -y .. -y ../../common -y ../../../rtl/sram -y ../../../rtl/axi2mba -l dvlcom-1.log ../tb_top.vlog
+
+dvlcom +ignore+protect +ignore+endprotect +incdir+../../vflib/lib+../../vflib/axi+../../vflib/common+../../vflib/pin -sv -timescale 1ns/1ns +define+NO_PLI +libext+.v+.vp+.vlog +incdir+..+../../common+../../../rtl/sram+../../../rtl/axi2mba+/common+/lib+/axi+/pin+../../mba+..+../include -y .. -y ../../common -y ../../../rtl/sram -y ../../../rtl/axi2mba -lib test2 -l dvlcom.log ../tests/test2.sv
+
+dsim -allow-int-enum-assign +acc+b -top work.tb_top -top test2.test -l dsim_image.log -genimage Sim-test2_elab
+
+dsim  -l sim-test2-seed5000.log -image Sim-test2_elab -waves waves-5000.mxd -sv_seed 5000

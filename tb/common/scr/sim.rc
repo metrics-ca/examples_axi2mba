@@ -1,0 +1,5 @@
+# sim.rc
+
+#SOPTS="+warn=noSTASKW_CO1,noSTASKW_RMCOF"
+
+# end of file

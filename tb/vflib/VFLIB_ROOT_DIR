@@ -1,0 +1,11 @@
+#
+# VFLIB directory setup
+#
+export VFLIB_ROOT_DIR=`pwd`
+echo "export VFLIB_ROOT_DIR=$VFLIB_ROOT_DIR"
+echo "       XVIP_ROOT_DIR=$XVIP_ROOT_DIR"
+FIND_OPT=
+[ "`uname -s`" != "SunOS" ] && FIND_OPT="-maxdepth 4"
+find $XVIP_ROOT_DIR $FIND_OPT -type f -name "*.sh" -exec chmod +x {} \;
+find $XVIP_ROOT_DIR $FIND_OPT -type f -name "*.pl" -exec chmod +x {} \;
+# end of file 

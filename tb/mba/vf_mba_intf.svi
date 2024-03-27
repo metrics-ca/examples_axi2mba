@@ -1,0 +1,86 @@
+//----------------------------------------------------------------------
+/**
+ * @file vf_mba_intf.svi
+ * @brief Defines VF MBA interface.
+ */
+/*
+ * Copyright (C) 2009-2016 Verifore, Inc.
+ * All rights reserved. Property of Verifore, Inc.
+ * Restricted rights to use, duplicate or disclose
+ * this code are granted through contract.
+ */
+//----------------------------------------------------------------------
+`ifndef _VF_MBA_INTF_SVI_
+`define _VF_MBA_INTF_SVI_
+//`protect
+
+`include "vf_mba_defines.inc"
+
+//======================================================================
+/**
+ * VF MBA interface.
+ */
+//======================================================================
+
+interface vf_mba_intf();
+
+   //===================================================================
+   // parameters
+   //===================================================================
+
+   parameter INPUT_SKW  = 1ns;
+   parameter OUTPUT_SKW = 1ns;
+
+   //===================================================================
+   // signals
+   //===================================================================
+
+   wire clk    ;
+   wire zreset ;
+
+   wire                          arb_req  ; // IP -> DDR
+   wire                          arb_rel  ; // IP -> DDR
+   wire                          arb_nel  ; // IP -> DDR
+   wire                          arb_rzw  ; // IP -> DDR
+   wire [`VF_MBA_ADR_WIDTH-1:2]  arb_adr  ; // IP -> DDR
+   wire [`VF_MBA_BST_WIDTH-1:2]  arb_bst  ; // IP -> DDR
+   wire                          arb_wak  ; // IP <- DDR
+   wire [`VF_MBA_DT_WIDTH -1:0]  arb_rdt  ; // IP -> DDR
+   wire [`VF_MBA_BEN_WIDTH-1:0]  arb_ben  ; // IP -> DDR
+   wire                          arb_rak  ; // IP <- DDR
+   wire [`VF_MBA_DT_WIDTH -1:0]  arb_wdt  ; // IP <- DDR
+
+   //===================================================================
+   // clockings
+   //===================================================================
+
+   //---------------------------------------------------
+   // monitor port clocking
+   //---------------------------------------------------
+
+   clocking mon_clking @( posedge clk );
+      default input #INPUT_SKW output #OUTPUT_SKW;
+      input  zreset  ;
+
+      input  arb_req ;
+      input  arb_rel ;
+      input  arb_nel ;
+      input  arb_rzw ;
+      input  arb_adr ;
+      input  arb_bst ;
+      input  arb_wak ;
+      input  arb_rdt ;
+      input  arb_ben ;
+      input  arb_rak ;
+      input  arb_wdt ;
+   endclocking: mon_clking
+
+   //===================================================================
+   // modports
+   //===================================================================
+
+   modport   mon( clocking   mon_clking );
+
+endinterface: vf_mba_intf
+//`endprotect
+`endif // `ifndef _VF_MBA_INTF_SVI_

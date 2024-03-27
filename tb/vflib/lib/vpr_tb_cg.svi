@@ -1,0 +1,62 @@
+//----------------------------------------------------------------------
+/**
+ * @file vpr_tb_cg.svi
+ * @brief Defines Testbench Clock Generator utility.
+ */
+/*
+ * Copyright (C) 2009-2011 Verifore, Inc.
+ * All rights reserved. Property of Verifore, Inc.
+ * Restricted rights to use, duplicate or disclose
+ * this code are granted through contract.
+ */
+//----------------------------------------------------------------------
+`ifndef _VPR_TB_CG_SVI_
+`define _VPR_TB_CG_SVI_
+//`protect
+
+//======================================================================
+/**
+ * Testbench Clock Generator utility.
+ */
+//======================================================================
+
+interface vpr_tb_cg(
+      output bit clk    // clock
+   );
+
+   //===================================================================
+   // Parameters and Signals
+   //===================================================================
+
+   parameter   T     = 10ns   ; // 100MHz
+   parameter   DLY   =  0ns   ; // no-delay
+
+   reg         SystemClock    ;
+   real        t_base         ;
+   real        t_next         ;
+
+   //===================================================================
+   // Clock
+   //===================================================================
+
+   assign clk = SystemClock;
+
+   initial begin
+      t_base      =  T;
+      t_next      =  t_base / 2.0;
+      SystemClock <= 1'b0;
+      #( DLY );
+      forever
+         #( t_next ) SystemClock <= ~SystemClock;
+   end
+
+   always @( SystemClock ) begin
+      t_next = t_base / 2.0;
+   end
+
+   clocking cb @( posedge SystemClock );
+   endclocking
+
+endinterface: vpr_tb_cg
+//`endprotect
+`endif // `ifndef _VPR_TB_CG_SVI_
