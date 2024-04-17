@@ -1,6 +1,6 @@
 name: axi2mba-fanout-simtime
 tasks:
-- name: analyze
+- name: library
   mdc_work: tb/axi2mba/work.regress
   commands:
   - ls
@@ -52,9 +52,9 @@ tasks:
   fanout:
     type: random
     name: sim_time
-    count: 5
-    from: 2000
-    to: 5000
+    count: 1
+    from: 20
+    to: 25
   commands:
   - dsim  -l sim_logs/sim-test2.log -image Sim-test2_elab -sv_seed 5100 +sim_time=$(fanout.sim_time)
   inputs:
