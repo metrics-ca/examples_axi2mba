@@ -48,7 +48,7 @@ This README contains a examples of how to use each of these flows for this sampl
     - `mdc auth login`
 4. Submit the provided job file
     - From VSCode -> Terminal Panel -> New Terminal Selector -> DSim Desktop
-        - `mdc job submit dsim/axi2mba-fanout-simtime.yaml`
+        - `mdc job submit dsim/axi2mba-fanout-basic.yaml`
     - View progress in the `JOBS` panel in DSim Desktop
     - To vary number of simulations and time edit the `fanout` properties for the `sim-test2-sim` task in the job yaml
         
